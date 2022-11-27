@@ -32,13 +32,13 @@ pub fn read(sha: &str) -> Result<Object> {
 pub fn write(object: &Object) -> Result<String> {
     let encoded = encode(object);
 
+    let mut hasher = Sha1::new();
+    hasher.update(&encoded);
+    let sha = format!("{:x}", hasher.finalize());
+
     let mut zlib_encoder = ZlibEncoder::new(Vec::new(), Compression::default());
     zlib_encoder.write_all(&encoded)?;
     let compressed = zlib_encoder.finish()?;
-
-    let mut hasher = Sha1::new();
-    hasher.update(&compressed);
-    let sha = format!("{:x}", hasher.finalize());
 
     let (dir_path, file_path) = get_paths_from_sha(&sha);
 
