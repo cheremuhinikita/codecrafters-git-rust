@@ -11,17 +11,20 @@ use sha1::{Digest, Sha1};
 use super::{decode::decode, encode::encode, Object};
 use crate::Result;
 
-fn get_path_from_sha(sha: &str) -> PathBuf {
-    Path::new(".git/objects").join(&sha[..2]).join(&sha[2..])
+fn get_paths_from_sha(sha: &str) -> (PathBuf, PathBuf) {
+    let dir_path = Path::new(".git/objects").join(&sha[..2]);
+    let file_path = dir_path.join(&sha[2..]);
+
+    (dir_path, file_path)
 }
 
 pub fn read(sha: &str) -> Result<Object> {
-    let path = get_path_from_sha(sha);
-    let bytes = fs::read(path)?;
+    let (_, file_path) = get_paths_from_sha(sha);
+    let bytes = fs::read(file_path)?;
 
-    let mut decoder = ZlibDecoder::new(bytes.as_slice());
+    let mut zlib_decoder = ZlibDecoder::new(bytes.as_slice());
     let mut buf = Vec::<u8>::new();
-    decoder.read_to_end(&mut buf)?;
+    zlib_decoder.read_to_end(&mut buf)?;
 
     decode(buf.as_slice())
 }
@@ -37,9 +40,10 @@ pub fn write(object: &Object) -> Result<String> {
     hasher.update(&compressed);
     let sha = format!("{:x}", hasher.finalize());
 
-    let path = get_path_from_sha(&sha);
+    let (dir_path, file_path) = get_paths_from_sha(&sha);
 
-    fs::write(path, compressed)?;
+    fs::create_dir_all(dir_path)?;
+    fs::write(file_path, compressed)?;
 
     Ok(sha)
 }

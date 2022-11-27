@@ -5,11 +5,11 @@ use crate::{
     obj::{blob::Blob, store, Object},
 };
 
-pub struct HasObject {
+pub struct HashObject {
     path: String,
 }
 
-impl HasObject {
+impl HashObject {
     pub fn parse(args: &[String]) -> Result<Self> {
         match args.get(0).map(|a| a.as_str()) {
             Some("-w") => {}
@@ -25,7 +25,7 @@ impl HasObject {
     }
 
     pub fn exec(self) -> Result<()> {
-        let content = fs::read(self.path)?;
+        let content = fs::read(&self.path)?;
 
         let blob = Blob::new(content.as_slice());
         let object = Object::from_blob(blob);

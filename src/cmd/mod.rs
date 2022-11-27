@@ -4,12 +4,12 @@ pub mod init;
 
 use crate::error::{Error, Result};
 
-use self::{cat_file::CatFile, hash_object::HasObject, init::Init};
+use self::{cat_file::CatFile, hash_object::HashObject, init::Init};
 
 pub enum Command {
     Init(Init),
     CatFile(CatFile),
-    HashObject(HasObject),
+    HashObject(HashObject),
 }
 
 impl Command {
@@ -22,7 +22,7 @@ impl Command {
         let cmd = match command.as_str() {
             "init" => Self::Init(Init),
             "cat-file" => Self::CatFile(CatFile::parse(args)?),
-            "hash-object" => Self::HashObject(HasObject::parse(args)?),
+            "hash-object" => Self::HashObject(HashObject::parse(args)?),
             _ => return Err(Error::ParseCommand(format!("unknown command: {}", command))),
         };
 
