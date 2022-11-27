@@ -1,11 +1,13 @@
 use thiserror::Error;
 
-#[derive(Debug, Error)]
+#[derive(Error, Debug)]
 pub enum Error {
     #[error("IO error")]
     IoError(#[from] std::io::Error),
     #[error("utf-8 error")]
     Utf8Error(#[from] std::str::Utf8Error),
+    #[error("from utf-8 error")]
+    FromUtf8Error(#[from] std::string::FromUtf8Error),
     #[error("failed parse command args")]
     ParseCommand(String),
     #[error("failed parse object")]

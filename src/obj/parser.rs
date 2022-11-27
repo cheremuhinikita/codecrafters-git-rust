@@ -1,9 +1,4 @@
-#[derive(Debug, PartialEq)]
-pub struct RawObject {
-    pub kind: String,
-    pub size: usize,
-    pub content: String,
-}
+use super::raw::RawObject;
 
 type ParseResult<'a, O> = Result<(&'a str, O), &'a str>;
 
@@ -163,7 +158,7 @@ fn content(input: &str) -> ParseResult<(usize, String)> {
     })(input)
 }
 
-pub fn raw_object(input: &str) -> ParseResult<RawObject> {
+pub fn parse_raw_object(input: &str) -> ParseResult<RawObject> {
     map(pair(kind, content), |(kind, (size, content))| RawObject {
         kind,
         size,
@@ -204,7 +199,7 @@ mod tests {
                     content: String::from("what is up, doc?")
                 }
             )),
-            raw_object("blob 16\0what is up, doc?")
+            parse_raw_object("blob 16\0what is up, doc?")
         );
     }
 }

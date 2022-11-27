@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, process};
 
 use git_starter_rust::run;
 
@@ -7,5 +7,6 @@ fn main() {
 
     if let Err(e) = run(args) {
         eprintln!("error: {:?}", e);
+        process::exit(1)
     }
 }
