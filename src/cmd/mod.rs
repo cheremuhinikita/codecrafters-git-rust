@@ -16,7 +16,7 @@ impl Command {
     pub fn parse(args: &[String]) -> Result<Self> {
         let command = &args
             .get(1)
-            .ok_or(Error::ParseCommand(String::from("missing command name")))?;
+            .ok_or_else(|| Error::ParseCommand(String::from("missing command name")))?;
         let args = &args[2..];
 
         let cmd = match command.as_str() {

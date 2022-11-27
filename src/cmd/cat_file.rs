@@ -28,7 +28,7 @@ impl CatFile {
         let object = store::read(&self.blob_sha)?;
         let blob = object
             .as_blob()
-            .ok_or(Error::Generic(String::from("git object must be blob")))?;
+            .ok_or_else(|| Error::Generic(String::from("git object must be blob")))?;
 
         io::stdout().write_all(blob.0.as_slice())?;
 
