@@ -3,6 +3,7 @@ pub mod decode;
 pub mod encode;
 pub mod parser;
 pub mod raw;
+pub mod sha;
 pub mod store;
 pub mod tree;
 

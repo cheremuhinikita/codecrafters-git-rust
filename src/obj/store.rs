@@ -6,9 +6,8 @@ use std::{
 };
 
 use flate2::{read::ZlibDecoder, write::ZlibEncoder, Compression};
-use sha1::{Digest, Sha1};
 
-use super::{decode::decode, encode::encode, Object};
+use super::{decode::decode, encode::encode, sha::get_sha, Object};
 use crate::Result;
 
 fn get_paths_from_sha(sha: &str) -> (PathBuf, PathBuf) {
@@ -32,9 +31,7 @@ pub fn read(sha: &str) -> Result<Object> {
 pub fn write(object: &Object) -> Result<String> {
     let encoded = encode(object);
 
-    let mut hasher = Sha1::new();
-    hasher.update(&encoded);
-    let sha = format!("{:x}", hasher.finalize());
+    let sha = get_sha(&encoded);
 
     let mut zlib_encoder = ZlibEncoder::new(Vec::new(), Compression::default());
     zlib_encoder.write_all(&encoded)?;

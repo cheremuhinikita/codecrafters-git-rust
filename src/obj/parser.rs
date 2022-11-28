@@ -188,20 +188,12 @@ pub fn parse_raw_object(input: &[u8]) -> ParseResult<RawObject> {
     })(input)
 }
 
-fn entry_sha(input: &[u8]) -> ParseResult<String> {
-    map(take(20), |bytes| {
-        String::from_utf8_lossy(&bytes).into_owned()
-    })(input)
-}
-
 fn tree_entry(input: &[u8]) -> ParseResult<TreeEntry> {
+    dbg!(input);
+
     map(
-        pair3(identifier, null_byte, entry_sha),
-        |(mode, name, sha)| TreeEntry {
-            mode: mode.try_into().unwrap(),
-            name,
-            sha,
-        },
+        pair3(identifier, null_byte, take(20)),
+        |(mode, name, sha)| TreeEntry::build(mode, name, sha).unwrap(),
     )(input)
 }
 
@@ -265,12 +257,16 @@ mod tests {
             Ok((
                 "".as_bytes(),
                 TreeEntry {
-                    mode: TreeEntryMode::Tree,
-                    name: String::from("octopus-admin"),
-                    sha: String::from("a84943494657751ce187be401d6bf59ef7a2583c")
+                    mode: TreeEntryMode::BlobExecutable,
+                    name: String::from("your_git.sh"),
+                    sha: String::from("913d78022746dd1463d910c8c317495d587fc8ad")
                 }
             )),
-            tree_entry(b"40000 octopus-admin\0a84943494657751ce187be401d6bf59ef7a2583c")
+            tree_entry(&[
+                49, 48, 48, 55, 53, 53, 32, 121, 111, 117, 114, 95, 103, 105, 116, 46, 115, 104, 0,
+                146, 162, 89, 8, 234, 154, 63, 46, 30, 85, 218, 89, 230, 228, 204, 239, 37, 221,
+                189, 98,
+            ])
         );
     }
 
@@ -280,19 +276,24 @@ mod tests {
             Ok((
                 "".as_bytes(),
                 vec![
-					TreeEntry {
-						mode: TreeEntryMode::Tree,
-						name: String::from("octopus-admin"),
-						sha: String::from("a84943494657751ce187be401d6bf59ef7a2583c")
-					},
-					TreeEntry {
-						mode: TreeEntryMode::Blob,
-						name: String::from("pom.xml"),
-						sha: String::from("97e5b6b292d248869780d7b0c65834bfb645e32a")
-					}
-				]
+                    TreeEntry {
+                        mode: TreeEntryMode::Tree,
+                        name: String::from("src"),
+                        sha: String::from("34e9d5a326c3a6110e7b85130be6c358b9ab3eff")
+                    },
+                    TreeEntry {
+                        mode: TreeEntryMode::BlobExecutable,
+                        name: String::from("your_git.sh"),
+                        sha: String::from("913d78022746dd1463d910c8c317495d587fc8ad")
+                    }
+                ]
             )),
-            parse_tree_entries(b"40000 octopus-admin\0a84943494657751ce187be401d6bf59ef7a2583c100644 pom.xml\097e5b6b292d248869780d7b0c65834bfb645e32a")
+            parse_tree_entries(&[
+                52, 48, 48, 48, 48, 32, 115, 114, 99, 0, 240, 227, 136, 179, 121, 59, 104, 152,
+                122, 92, 98, 110, 101, 163, 89, 2, 68, 223, 145, 103, 49, 48, 48, 55, 53, 53, 32,
+                121, 111, 117, 114, 95, 103, 105, 116, 46, 115, 104, 0, 146, 162, 89, 8, 234, 154,
+                63, 46, 30, 85, 218, 89, 230, 228, 204, 239, 37, 221, 189, 98,
+            ])
         );
     }
 }

@@ -1,4 +1,4 @@
-use super::parser::parse_tree_entries;
+use super::{parser::parse_tree_entries, sha::get_sha};
 use crate::{Error, Result};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -28,6 +28,16 @@ pub struct TreeEntry {
     pub mode: TreeEntryMode,
     pub name: String,
     pub sha: String,
+}
+
+impl TreeEntry {
+    pub fn build(mode: String, name: String, sha: &[u8]) -> Result<Self> {
+        Ok(Self {
+            mode: mode.try_into()?,
+            name,
+            sha: get_sha(sha),
+        })
+    }
 }
 
 pub struct Tree(pub Vec<TreeEntry>);
