@@ -5,6 +5,7 @@ use crate::{Error, Result};
 pub enum TreeEntryMode {
     Blob,
     Tree,
+    BlobExecutable,
 }
 
 impl TryFrom<String> for TreeEntryMode {
@@ -14,7 +15,8 @@ impl TryFrom<String> for TreeEntryMode {
         let mode = match value.as_str() {
             "40000" => Self::Tree,
             "100644" => Self::Blob,
-            _ => return Err(Error::Generic(String::from("unknown tree entry mode"))),
+            "100755" => Self::BlobExecutable,
+            mode => return Err(Error::Generic(format!("unknown tree entry mode {}", mode))),
         };
 
         Ok(mode)
