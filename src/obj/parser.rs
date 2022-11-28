@@ -189,8 +189,6 @@ pub fn parse_raw_object(input: &[u8]) -> ParseResult<RawObject> {
 }
 
 fn tree_entry(input: &[u8]) -> ParseResult<TreeEntry> {
-    dbg!(input);
-
     map(
         pair3(identifier, null_byte, take(20)),
         |(mode, name, sha)| TreeEntry::build(mode, name, sha).unwrap(),
