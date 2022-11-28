@@ -6,7 +6,7 @@ use crate::{
 };
 
 pub struct HashObject {
-    path: String,
+    file: String,
 }
 
 impl HashObject {
@@ -17,15 +17,15 @@ impl HashObject {
         }
 
         match args.get(1) {
-            Some(path) => Ok(Self {
-                path: path.to_owned(),
+            Some(file) => Ok(Self {
+                file: file.to_owned(),
             }),
-            None => Err(Error::ParseCommand(String::from("missing path arg"))),
+            None => Err(Error::ParseCommand(String::from("missing file arg"))),
         }
     }
 
     pub fn exec(self) -> Result<()> {
-        let content = fs::read(&self.path)?;
+        let content = fs::read(&self.file)?;
 
         let blob = Blob::new(content.as_slice());
         let object = Object::from_blob(blob);

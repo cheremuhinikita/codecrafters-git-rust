@@ -4,15 +4,14 @@ pub mod encode;
 pub mod parser;
 pub mod raw;
 pub mod store;
+pub mod tree;
 
-use std::str;
-
-use self::{blob::Blob, raw::RawObject};
+use self::{blob::Blob, raw::RawObject, tree::Tree};
 use crate::{error::Error, Result};
 
 pub enum Object {
     Blob(Blob),
-    Tree,
+    Tree(Tree),
     Commit,
 }
 
@@ -20,6 +19,7 @@ impl Object {
     pub fn from_raw(raw: RawObject) -> Result<Self> {
         let obj = match raw.kind.as_str() {
             "blob" => Self::from_blob(Blob::parse(&raw.content)),
+            "tree" => Self::from_tree(Tree::parse(&raw.content)?),
             kind => return Err(Error::ParseObject(format!("unknown object kind: {}", kind))),
         };
 
@@ -32,9 +32,7 @@ impl Object {
             _ => todo!(),
         };
 
-        let content = str::from_utf8(&content).unwrap();
-
-        RawObject::new(kind, content)
+        RawObject::new(kind, &content)
     }
 
     pub fn from_blob(blob: Blob) -> Self {
@@ -50,5 +48,20 @@ impl Object {
 
     pub fn is_blob(&self) -> bool {
         self.as_blob().is_some()
+    }
+
+    pub fn from_tree(tree: Tree) -> Self {
+        Self::Tree(tree)
+    }
+
+    pub fn as_tree(&self) -> Option<&Tree> {
+        match self {
+            Self::Tree(tree) => Some(tree),
+            _ => None,
+        }
+    }
+
+    pub fn is_tree(&self) -> bool {
+        self.as_tree().is_some()
     }
 }

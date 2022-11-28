@@ -8,6 +8,8 @@ pub enum Error {
     Utf8Error(#[from] std::str::Utf8Error),
     #[error("from utf-8 error")]
     FromUtf8Error(#[from] std::string::FromUtf8Error),
+    #[error("os string error")]
+    OsString(std::ffi::OsString),
     #[error("failed parse command args")]
     ParseCommand(String),
     #[error("failed parse object")]

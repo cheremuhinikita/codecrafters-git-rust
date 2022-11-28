@@ -2,17 +2,15 @@
 pub struct RawObject {
     pub kind: String,
     pub size: usize,
-    pub content: String,
+    pub content: Vec<u8>,
 }
 
 impl RawObject {
-    pub fn new(kind: impl ToString, content: impl ToString) -> Self {
-        let content = content.to_string();
-
+    pub fn new(kind: impl ToString, content: &[u8]) -> Self {
         Self {
             kind: kind.to_string(),
             size: content.len(),
-            content,
+            content: content.to_vec(),
         }
     }
 
@@ -23,7 +21,7 @@ impl RawObject {
         result.push(b' ');
         result.extend_from_slice(self.size.to_string().as_bytes());
         result.push(b'\0');
-        result.extend_from_slice(self.content.as_bytes());
+        result.extend_from_slice(&self.content);
 
         result
     }

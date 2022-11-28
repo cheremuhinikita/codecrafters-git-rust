@@ -5,8 +5,8 @@ impl Blob {
         Self(bytes.to_vec())
     }
 
-    pub fn parse(input: &str) -> Self {
-        Self::new(input.as_bytes())
+    pub fn parse(input: &[u8]) -> Self {
+        Self::new(input)
     }
 
     pub fn to_bytes(&self) -> Vec<u8> {

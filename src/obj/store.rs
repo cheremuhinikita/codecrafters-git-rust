@@ -26,7 +26,7 @@ pub fn read(sha: &str) -> Result<Object> {
     let mut buf = Vec::<u8>::new();
     zlib_decoder.read_to_end(&mut buf)?;
 
-    decode(buf.as_slice())
+    decode(&buf)
 }
 
 pub fn write(object: &Object) -> Result<String> {

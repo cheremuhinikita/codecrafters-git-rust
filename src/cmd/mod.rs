@@ -1,15 +1,16 @@
 pub mod cat_file;
 pub mod hash_object;
 pub mod init;
+pub mod ls_tree;
 
+use self::{cat_file::CatFile, hash_object::HashObject, init::Init, ls_tree::LsTree};
 use crate::error::{Error, Result};
-
-use self::{cat_file::CatFile, hash_object::HashObject, init::Init};
 
 pub enum Command {
     Init(Init),
     CatFile(CatFile),
     HashObject(HashObject),
+    LsTree(LsTree),
 }
 
 impl Command {
@@ -23,6 +24,7 @@ impl Command {
             "init" => Self::Init(Init),
             "cat-file" => Self::CatFile(CatFile::parse(args)?),
             "hash-object" => Self::HashObject(HashObject::parse(args)?),
+            "ls-tree" => Self::LsTree(LsTree::parse(args)?),
             _ => return Err(Error::ParseCommand(format!("unknown command: {}", command))),
         };
 
@@ -34,6 +36,7 @@ impl Command {
             Self::Init(init) => init.exec(),
             Self::CatFile(cat_file) => cat_file.exec(),
             Self::HashObject(hash_object) => hash_object.exec(),
+            Self::LsTree(ls_tree) => ls_tree.exec(),
         }
     }
 }
