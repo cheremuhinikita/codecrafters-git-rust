@@ -1,4 +1,4 @@
-pub struct Blob(pub Vec<u8>);
+pub struct Blob(Vec<u8>);
 
 impl Blob {
     pub fn new(bytes: &[u8]) -> Self {

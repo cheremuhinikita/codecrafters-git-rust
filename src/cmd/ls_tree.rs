@@ -33,8 +33,8 @@ impl LsTree {
             .as_tree()
             .ok_or_else(|| Error::Generic(String::from("git object must be tree")))?;
 
-        for tree_entry in tree.0.iter() {
-            println!("{}", tree_entry.name);
+        for entry_name in tree.entry_names() {
+            println!("{}", entry_name);
         }
 
         Ok(())

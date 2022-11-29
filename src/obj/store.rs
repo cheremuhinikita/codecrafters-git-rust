@@ -7,8 +7,8 @@ use std::{
 
 use flate2::{read::ZlibDecoder, write::ZlibEncoder, Compression};
 
-use super::{decode::decode, encode::encode, sha::get_sha, Object};
-use crate::Result;
+use super::{decode::decode, encode::encode, Object};
+use crate::{sha::get_sha, Result};
 
 fn get_paths_from_sha(sha: &str) -> (PathBuf, PathBuf) {
     let dir_path = Path::new(".git/objects").join(&sha[..2]);

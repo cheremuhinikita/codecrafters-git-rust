@@ -254,11 +254,11 @@ mod tests {
         assert_eq!(
             Ok((
                 "".as_bytes(),
-                TreeEntry {
-                    mode: TreeEntryMode::BlobExecutable,
-                    name: String::from("your_git.sh"),
-                    sha: String::from("913d78022746dd1463d910c8c317495d587fc8ad")
-                }
+                TreeEntry::new(
+                    TreeEntryMode::BlobExecutable,
+                    String::from("your_git.sh"),
+                    String::from("92a25908ea9a3f2e1e55da59e6e4ccef25ddbd62")
+                )
             )),
             tree_entry(&[
                 49, 48, 48, 55, 53, 53, 32, 121, 111, 117, 114, 95, 103, 105, 116, 46, 115, 104, 0,
@@ -274,16 +274,16 @@ mod tests {
             Ok((
                 "".as_bytes(),
                 vec![
-                    TreeEntry {
-                        mode: TreeEntryMode::Tree,
-                        name: String::from("src"),
-                        sha: String::from("34e9d5a326c3a6110e7b85130be6c358b9ab3eff")
-                    },
-                    TreeEntry {
-                        mode: TreeEntryMode::BlobExecutable,
-                        name: String::from("your_git.sh"),
-                        sha: String::from("913d78022746dd1463d910c8c317495d587fc8ad")
-                    }
+                    TreeEntry::new(
+                        TreeEntryMode::Tree,
+                        String::from("src"),
+                        String::from("f0e388b3793b68987a5c626e65a3590244df9167")
+                    ),
+                    TreeEntry::new(
+                        TreeEntryMode::BlobExecutable,
+                        String::from("your_git.sh"),
+                        String::from("92a25908ea9a3f2e1e55da59e6e4ccef25ddbd62")
+                    )
                 ]
             )),
             parse_tree_entries(&[

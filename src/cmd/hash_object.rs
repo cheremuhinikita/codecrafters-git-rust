@@ -10,6 +10,12 @@ pub struct HashObject {
 }
 
 impl HashObject {
+    pub fn new(file: impl ToString) -> Self {
+        Self {
+            file: file.to_string(),
+        }
+    }
+
     pub fn parse(args: &[String]) -> Result<Self> {
         match args.get(0).map(|a| a.as_str()) {
             Some("-w") => {}
@@ -24,13 +30,17 @@ impl HashObject {
         }
     }
 
-    pub fn exec(self) -> Result<()> {
+    pub fn inner(&self) -> Result<String> {
         let content = fs::read(&self.file)?;
 
         let blob = Blob::new(content.as_slice());
         let object = Object::from_blob(blob);
 
-        let sha = store::write(&object)?;
+        store::write(&object)
+    }
+
+    pub fn exec(self) -> Result<()> {
+        let sha = self.inner()?;
 
         println!("{}", sha);
 

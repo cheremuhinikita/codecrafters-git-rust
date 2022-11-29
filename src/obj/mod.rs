@@ -3,7 +3,6 @@ pub mod decode;
 pub mod encode;
 pub mod parser;
 pub mod raw;
-pub mod sha;
 pub mod store;
 pub mod tree;
 
@@ -30,6 +29,7 @@ impl Object {
     fn to_raw(&self) -> RawObject {
         let (kind, content) = match self {
             Object::Blob(blob) => ("blob", blob.to_bytes()),
+            Object::Tree(tree) => ("tree", tree.to_bytes()),
             _ => todo!(),
         };
 

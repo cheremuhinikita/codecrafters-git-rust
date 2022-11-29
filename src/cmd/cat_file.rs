@@ -10,6 +10,12 @@ pub struct CatFile {
 }
 
 impl CatFile {
+    pub fn new(blob_sha: impl ToString) -> Self {
+        Self {
+            blob_sha: blob_sha.to_string(),
+        }
+    }
+
     pub fn parse(args: &[String]) -> Result<Self> {
         match args.get(0).map(|a| a.as_str()) {
             Some("-p") => {}
@@ -24,13 +30,17 @@ impl CatFile {
         }
     }
 
-    pub fn exec(self) -> Result<()> {
-        let object = store::read(&self.blob_sha)?;
-        let blob = object
+    pub fn inner(&self) -> Result<Vec<u8>> {
+        store::read(&self.blob_sha)?
             .as_blob()
-            .ok_or_else(|| Error::Generic(String::from("git object must be blob")))?;
+            .map(|b| b.to_bytes())
+            .ok_or_else(|| Error::Generic(String::from("git object must be blob")))
+    }
 
-        io::stdout().write_all(blob.0.as_slice())?;
+    pub fn exec(self) -> Result<()> {
+        let bytes = self.inner()?;
+
+        io::stdout().write_all(&bytes)?;
 
         Ok(())
     }
