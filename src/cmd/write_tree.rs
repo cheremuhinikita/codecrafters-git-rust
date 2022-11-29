@@ -38,7 +38,9 @@ impl WriteTree {
             tree_entries.push(tree_entry);
         }
 
-        let tree = Tree::new(tree_entries);
+        let mut tree = Tree::new(tree_entries);
+        tree.sort_entries();
+
         let object = Object::from_tree(tree);
 
         store::write(&object)

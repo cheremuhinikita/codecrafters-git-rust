@@ -65,6 +65,10 @@ impl Tree {
         Self(tree_entries)
     }
 
+    pub fn sort_entries(&mut self) {
+        self.0.sort_by(|a, b| a.name.cmp(&b.name));
+    }
+
     pub fn parse(input: &[u8]) -> Result<Self> {
         parse_tree_entries(input)
             .map_err(|e| Error::ParseObject(String::from_utf8_lossy(e).into_owned()))
