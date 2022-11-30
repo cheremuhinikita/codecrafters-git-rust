@@ -1,18 +1,20 @@
 pub mod blob;
+pub mod commit;
 pub mod decode;
 pub mod encode;
 pub mod parser;
 pub mod raw;
 pub mod store;
 pub mod tree;
+pub mod user;
 
-use self::{blob::Blob, raw::RawObject, tree::Tree};
+use self::{blob::Blob, commit::Commit, raw::RawObject, tree::Tree};
 use crate::{error::Error, Result};
 
 pub enum Object {
     Blob(Blob),
     Tree(Tree),
-    Commit,
+    Commit(Commit),
 }
 
 impl Object {
@@ -30,7 +32,7 @@ impl Object {
         let (kind, content) = match self {
             Object::Blob(blob) => ("blob", blob.to_bytes()),
             Object::Tree(tree) => ("tree", tree.to_bytes()),
-            _ => todo!(),
+            Object::Commit(commit) => ("commit", commit.to_bytes()),
         };
 
         RawObject::new(kind, &content)
@@ -64,5 +66,20 @@ impl Object {
 
     pub fn is_tree(&self) -> bool {
         self.as_tree().is_some()
+    }
+
+    pub fn from_commit(commit: Commit) -> Self {
+        Self::Commit(commit)
+    }
+
+    pub fn as_commit(&self) -> Option<&Commit> {
+        match self {
+            Self::Commit(commit) => Some(commit),
+            _ => None,
+        }
+    }
+
+    pub fn is_commit(&self) -> bool {
+        self.as_commit().is_some()
     }
 }
