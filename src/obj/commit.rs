@@ -38,12 +38,12 @@ impl Commit {
         let mut result = Vec::<u8>::new();
 
         result.extend_from_slice(b"tree ");
-        result.extend_from_slice(hex::decode(&self.tree_sha).unwrap().as_slice());
+        result.extend_from_slice(self.tree_sha.as_bytes());
         result.push(b'\n');
 
         if let Some(parent_sha) = &self.parent_sha {
             result.extend_from_slice(b"parent ");
-            result.extend_from_slice(hex::decode(&parent_sha).unwrap().as_slice());
+            result.extend_from_slice(parent_sha.as_bytes());
             result.push(b'\n');
         }
 
