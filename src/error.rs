@@ -14,9 +14,9 @@ pub enum Error {
     ParseIntError(#[from] std::num::ParseIntError),
     #[error("os string error")]
     OsString(std::ffi::OsString),
-    #[error("failed parse command args")]
+    #[error("failed parse command args - {0}")]
     ParseCommand(String),
-    #[error("failed parse object")]
+    #[error("failed parse object - {0}")]
     ParseObject(String),
     #[error("{0}")]
     Generic(String),
